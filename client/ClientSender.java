@@ -6,7 +6,7 @@ import com.db.edu.Messenger.client.clientProcessor.UserCommands;
 import com.db.edu.Messenger.exceptions.ClientConnectionException;
 
 public class ClientSender {
-    private final static int PORT = 8080;
+    private final static int PORT = 80;
 
     public static void main(String[] args) {
         try {
