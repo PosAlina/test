@@ -4,7 +4,7 @@ import com.db.edu.Messenger.client.clientProcessor.ClientConnector;
 import com.db.edu.Messenger.exceptions.ClientConnectionException;
 
 public class ClientReceiver {
-    private final static int PORT = 8081;
+    private final static int PORT = 80;
 
     public static void main(String[] args) {
         try {
