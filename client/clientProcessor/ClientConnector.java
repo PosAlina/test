@@ -45,9 +45,12 @@ public class ClientConnector {
         try {
             //in.readLine();
             send("");//Server should processed null
-        } catch (IOException e) {
-            throw new ClientConnectionException("Connection close");
-        }
+//         } catch (IOException e) {
+//             throw new ClientConnectionException("Connection close");
+//         }
+           } catch (ClientConnectionException e) {
+               throw new ClientConnectionException("Connection close");
+           }
     }
 
     public void send(String message) throws ClientConnectionException {
