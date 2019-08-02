@@ -7,52 +7,68 @@ import java.util.Date;
 
 
 public class ClientMessageHandler {
+    private static UserCommands userCommands = new UserCommands();
+    private static ServiceCommands serviceCommands = new ServiceCommands();
     private ClientConnector clientConnector;
-    private UserCommands userCommands;
 
-    public ClientMessageHandler(ClientConnector clientConnector, UserCommands userCommands) {
+    public ClientMessageHandler(ClientConnector clientConnector) {
         this.clientConnector = clientConnector;
-        this.userCommands = userCommands;
     }
 
     public void authorize() throws ClientConnectionException {
-        System.out.println("Please, input your name with command '/chid'.");
+        System.out.println("Please, input your name with command '" + userCommands.name() + "'");
+        
         while (true) {
             String message = clientConnector.read();
             String[] commandAndMessage = message.split(" ");
-            if (userCommands.name.equals(commandAndMessage[0])) {
+            
+            if (userCommands.isName(commandAndMessage[0])) {
                 if (commandAndMessage.length > 1) {
-                    String userName = commandAndMessage[1];
-                    checkCorrectName(userName);
+                    StringBuilder userName = new StringBuilder(commandAndMessage[1]);
+                    for (int wordNumber = 2; wordNumber <= commandAndMessage.length; wordNumber++) {
+                        userName.append(commandAndMessage[wordNumber]);
+                    }
+                    checkCorrectName(userName.toString());
                     break;
                 }
-                System.out.println("Please, input other name with command '/chid'.");
+                System.out.println("Please, input other name with command '" + userCommands.name() + "'");
             }
         }
     }
 
     private void checkCorrectName(String userName) throws ClientConnectionException {
-        clientConnector.send("#sender " + userName);
+        clientConnector.send(serviceCommands.sender() + userName);
     }
 
-    public String parseMessage(String message) {
+    public String parseMessage(String message) throws ClientConnectionException {
         String[] commandAndMessage = message.split(" ");
         String command = commandAndMessage[0];
-        if (userCommands.send.equals(command)) {
+        
+        if (userCommands.isSend(command)) {
             return message;
         }
-        if (userCommands.history.equals(command)) {
-            return userCommands.history;
+        if (userCommands.isHistory(command)) {
+            return userCommands.history();
         }
-        if (userCommands.close.equals(command)) {
-            return userCommands.close;
+        if (userCommands.isClose(command)) {
+            clientConnector.send(serviceCommands.close());
+            return userCommands.close();
         }
-        return userCommands.wrong;
+        return userCommands.wrong();
     }
 
     public String parseDate() {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
         Date date = new Date(System.currentTimeMillis());
+        
         return formatter.format(date);
+    }
+
+    public boolean isCloseMessage(String message) {
+        return userCommands.isClose(message);
+    }
+
+    public boolean isWrongMessage(String message) {
+        return userCommands.isWrong(message);
     }
 }
