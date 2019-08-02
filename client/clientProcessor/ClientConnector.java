@@ -43,13 +43,11 @@ public class ClientConnector {
 
     public void checkConnection() throws ClientConnectionException {
         try {
-            //in.readLine();
-            send("");//Server should processed null
-//         } catch (IOException e) {
-//             throw new ClientConnectionException("Connection close");
-//         }
+            while (true) {
+               receive();
+            }
            } catch (ClientConnectionException e) {
-               throw new ClientConnectionException("Connection close");
+               throw new ClientConnectionException("Connection closed");
            }
     }
 
