@@ -6,12 +6,13 @@ import java.io.*;
 import java.net.Socket;
 
 public class ClientConnector {
+    private static final int PORT = 80;
     private Socket server;
     private BufferedReader in;
     private BufferedWriter out;
     private BufferedReader console;
 
-    public ClientConnector(int PORT) throws ClientConnectionException {
+    public ClientConnector() throws ClientConnectionException {
         try {
             server = new Socket("localhost", PORT);
             in = new BufferedReader(
@@ -26,8 +27,9 @@ public class ClientConnector {
                             new InputStreamReader(
                                     new BufferedInputStream(
                                             System.in)));
+
         } catch (IOException e) {
-            throw new ClientConnectionException("Don't establish connection");
+            throw new ClientConnectionException("Connection don't established");
         }
     }
 
@@ -36,19 +38,19 @@ public class ClientConnector {
             out.close();
             in.close();
             server.close();
+
         } catch (IOException e) {
-            throw new ClientConnectionException("Error of connection closing");
+            throw new ClientConnectionException("Connection was closed with error");
         }
     }
 
     public void checkConnection() throws ClientConnectionException {
         try {
-            while (true) {
-               receive();
-            }
-           } catch (ClientConnectionException e) {
-               throw new ClientConnectionException("Connection closed");
-           }
+            receive();
+
+        } catch (ClientConnectionException e) {
+            throw new ClientConnectionException("Connection was closed");
+        }
     }
 
     public void send(String message) throws ClientConnectionException {
@@ -56,16 +58,18 @@ public class ClientConnector {
             out.write(message);
             out.newLine();
             out.flush();
+
         } catch (IOException e) {
-            throw new ClientConnectionException("Message don`t send.");
+            throw new ClientConnectionException("Message don`t sent");
         }
     }
 
     public String receive() throws ClientConnectionException {
         try {
             return in.readLine();
+
         } catch (IOException e) {
-            throw new ClientConnectionException("Message don`t receive");
+            throw new ClientConnectionException("Message don`t received");
         }
     }
 
@@ -76,6 +80,7 @@ public class ClientConnector {
     public String read() throws ClientConnectionException {
         try {
             return console.readLine();
+
         } catch (IOException e) {
             throw new ClientConnectionException("Message don`t read");
         }
